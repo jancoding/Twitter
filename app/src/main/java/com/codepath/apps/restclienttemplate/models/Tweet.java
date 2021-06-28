@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.Objects.isNull;
+
 @Parcel
 public class Tweet {
 
@@ -20,6 +22,7 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String time;
+    public String mediaUrl;
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
@@ -36,9 +39,27 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.time = getRelativeTimeAgo(tweet.createdAt);
+        // url for first image
+        tweet.mediaUrl = getEntity(jsonObject.getJSONObject("entities"));
+        Log.d("record", tweet.user.name + "    " + tweet.mediaUrl);
 
         return tweet;
     }
+
+    // retrieves url for first image in entity object in JSONResponse
+    public static String getEntity(JSONObject jsonObject) throws JSONException {
+        // returns null if no image exists
+        JSONArray allMedia = jsonObject.has("media") ? jsonObject.getJSONArray("media") : null;
+        String url = "";
+        if (allMedia != null) {
+            url =  allMedia.getJSONObject(0).getString("media_url_https");
+        }
+        Log.d("Tweet", url);
+
+        // with url if image exists else empty
+        return url;
+    }
+
 
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
