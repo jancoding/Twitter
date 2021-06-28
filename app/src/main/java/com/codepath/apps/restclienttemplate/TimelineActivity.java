@@ -73,4 +73,11 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onClickLogout() {
+        client.clearAccessToken();
+        finish();
+    }
+
+
 }
