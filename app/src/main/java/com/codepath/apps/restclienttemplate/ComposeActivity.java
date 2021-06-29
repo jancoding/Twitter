@@ -15,10 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.other.TwitterApp;
+import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONException;
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import okhttp3.Headers;

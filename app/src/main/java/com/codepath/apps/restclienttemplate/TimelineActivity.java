@@ -16,6 +16,9 @@ import android.view.View;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.other.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.restclienttemplate.other.TwitterApp;
+import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;

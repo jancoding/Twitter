@@ -1,8 +1,10 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.other;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.codepath.apps.restclienttemplate.BuildConfig;
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
