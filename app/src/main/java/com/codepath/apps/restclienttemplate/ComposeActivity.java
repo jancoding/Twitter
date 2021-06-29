@@ -3,11 +3,15 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -26,6 +30,7 @@ public class ComposeActivity extends AppCompatActivity {
     EditText etCompose;
     Button btnTweet;
     TwitterClient client;
+    TextView tvCharacterRemain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,27 @@ public class ComposeActivity extends AppCompatActivity {
 
          etCompose = findViewById(R.id.etCompose);
          btnTweet = findViewById(R.id.btnTweet);
+         tvCharacterRemain = findViewById(R.id.tvCharacterRemain);
+
+         etCompose.addTextChangedListener(new TextWatcher() {
+             @Override
+             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+             }
+
+             @Override
+             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+             }
+
+             @Override
+             public void afterTextChanged(Editable editable) {
+                 if (140 - editable.toString().length() < 0) {
+                     tvCharacterRemain.setTextColor(Color.RED);
+                 }
+                 tvCharacterRemain.setText(140 - editable.toString().length() + "/140");
+             }
+         });
 
          // Set click listener on button
         btnTweet.setOnClickListener(new View.OnClickListener() {

@@ -28,6 +28,7 @@
 
     <TextView
         android:id="@+id/tvBody"
+        android:autoLink="all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvScreenName"
@@ -56,4 +57,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/tvReply"
+        android:layout_width="363dp"
+        android:layout_height="42dp"
+        android:layout_below="@+id/ivEntity"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginBottom="331dp"
+        tools:text="@JoeBiden" />
 </RelativeLayout>

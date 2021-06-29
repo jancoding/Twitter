@@ -23,6 +23,7 @@ public class Tweet {
     public User user;
     public String time;
     public String mediaUrl;
+    public long max_id;
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
@@ -39,6 +40,7 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.time = getRelativeTimeAgo(tweet.createdAt);
+        tweet.max_id = jsonObject.getLong("id");
         // url for first image
         tweet.mediaUrl = getEntity(jsonObject.getJSONObject("entities"));
         Log.d("record", tweet.user.name + "    " + tweet.mediaUrl);
