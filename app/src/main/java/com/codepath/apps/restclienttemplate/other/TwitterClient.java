@@ -82,13 +82,56 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params,"", handler);
 	}
 
+	public void favoriteTweet(Tweet tweet, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/create.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id",tweet.id);
+		client.post(apiUrl, params,"", handler);
+	}
+
+	public void unlikeTweet(Tweet tweet, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/destroy.json");
+		RequestParams params = new RequestParams();
+		params.put("id", tweet.id);
+		client.post(apiUrl, params,"", handler);
+	}
+
+	public void reTweet(Tweet tweet, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/retweet/");
+		apiUrl  = apiUrl + tweet.id + ".json";
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+//		params.put("id", tweet.max_id);
+		client.post(apiUrl, params,"", handler);
+	}
+
 	public void replyTweet(String tweetContent, JsonHttpResponseHandler handler, Tweet tweet) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
-		params.put("in_reply_to_status_id", tweet.max_id);
+		params.put("in_reply_to_status_id", tweet.id);
 		client.post(apiUrl, params,"", handler);
+	}
+
+	public void getFollowers(String userid, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("followers/list.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("user_id", userid);
+		client.get(apiUrl, params, handler);
+
+	}
+
+
+
+	public void getFollowing(String userid, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("friends/list.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("user_id", userid);
+		client.get(apiUrl, params, handler);
 	}
 
 

@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.ProfileDetailActivity;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -23,6 +26,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -93,13 +97,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
-            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
+            ivProfileImage = itemView.findViewById(R.id.ivProfile);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvTime = itemView.findViewById(R.id.tvTime);
             ivEntity = itemView.findViewById(R.id.ivEntity);
             etReply = itemView.findViewById(R.id.etReply);
             btnReply = itemView.findViewById(R.id.btnReply);
+            itemView.setOnClickListener(this);
         }
 
 
@@ -153,13 +158,26 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
                 }
             });
+
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // intent to lead to a profile detail view that shows followers and following
+                    Intent intent = new Intent(itemView.getContext(), ProfileDetailActivity.class);
+                    intent.putExtra("User", Parcels.wrap(tweets.get(getAdapterPosition()).user));
+                    itemView.getContext().startActivity(intent);
+                }
+            });
         }
 
         @Override
         public void onClick(View view) {
+            Log.d("TweetsAdapter", "in here");
             // create intent to pass tweet and go to detail view
             Tweet tweet = tweets.get(getAdapterPosition());
-
+            Intent intent = new Intent(view.getContext(), TweetDetailActivity.class);
+            intent.putExtra("tweet", Parcels.wrap(tweet));
+            view.getContext().startActivity(intent);
         }
     }
 }
