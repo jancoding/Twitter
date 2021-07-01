@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         style="@style/WhiteText"
         app:viewpager_animatedHeaderImage="true"
-        app:viewpager_color="@color/blue"
+        app:viewpager_color="#1DA1F2"
         app:viewpager_displayToolbarWhenSwipe="true"
         app:viewpager_enableToolbarElevation="true"
         app:viewpager_headerAdditionalHeight="20dp"
