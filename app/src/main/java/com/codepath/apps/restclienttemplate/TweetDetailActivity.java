@@ -31,9 +31,11 @@ public class TweetDetailActivity extends AppCompatActivity {
     TextView tvTime;
     ImageView ivEntity;
     ImageButton btnRetweet;
+    TextView tvNumLikes;
+    TextView tvNumRetweet;
     ImageButton btnLike;
+    ImageButton btnReply;
     Tweet tweet;
-    private int liked = 0;
 
 
     @Override
@@ -41,20 +43,23 @@ public class TweetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_detail);
 
+
         // bind to view
         ivProfile = findViewById(R.id.ivProfile);
         tvScreenName = findViewById(R.id.tvScreenName);
         tvBody = findViewById(R.id.tvBody);
         tvTime = findViewById(R.id.tvTime);
-        btnRetweet = findViewById(R.id.btnRetweet);
+        btnRetweet = findViewById(R.id.btnRetweetMain);
+        btnReply = findViewById(R.id.btnReply);
         ivEntity = findViewById(R.id.ivEntity);
-        btnLike = findViewById(R.id.btnLike);
+        btnLike = findViewById(R.id.btnHeart);
+        tvNumLikes = findViewById(R.id.tvNumLiked);
+        tvNumRetweet = findViewById(R.id.tvNumRetweet);
 
-        btnRetweet.setImageResource(R.drawable.ic_vector_retweet);
-        btnLike.setImageResource(R.drawable.ic_vector_heart_stroke);
 
         btnLike.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
         btnRetweet.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
+        btnReply.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
 
 
         btnLike.setOnClickListener(new View.OnClickListener() {
@@ -62,9 +67,11 @@ public class TweetDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 TwitterClient client = TwitterApp.getRestClient(TweetDetailActivity.this);
 
-                if (liked == 0) {
+                if (!tweet.liked) {
                     btnLike.setImageResource(R.drawable.ic_vector_heart);
-                    liked = 1;
+                    tweet.liked = !tweet.liked;
+                    tweet.numLikes += 1;
+                    tvNumLikes.setText((tweet.numLikes) + "");
                     client.favoriteTweet(tweet, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -79,7 +86,9 @@ public class TweetDetailActivity extends AppCompatActivity {
 
                 } else {
                     btnLike.setImageResource(R.drawable.ic_vector_heart_stroke);
-                    liked = 0;
+                    tweet.liked = !tweet.liked;
+                    tweet.numLikes -= 1;
+                    tvNumLikes.setText((tweet.numLikes) + "");
                     client.unlikeTweet(tweet, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -104,17 +113,42 @@ public class TweetDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 TwitterClient client = TwitterApp.getRestClient(TweetDetailActivity.this);
-                client.reTweet(tweet, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.d("TweetDetailActivity", "succesfully retweeted");
-                    }
+                if (!tweet.retweeted) {
+                    btnRetweet.setImageResource(R.drawable.ic_vector_retweet);
+                    tweet.retweeted = !tweet.retweeted;
+                    tweet.numRetweets += 1;
+                    tvNumRetweet.setText((tweet.numRetweets) + "");
 
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.d("TweetDetailActivity", "failed to retweet");
-                    }
-                });
+                    client.reTweet(tweet, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.d("TweetDetailActivity", "succesfully retweeted");
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.d("TweetDetailActivity", "failed to retweet");
+                        }
+                    });
+
+                } else {
+                    tweet.numRetweets -= 1;
+                    tvNumRetweet.setText((tweet.numRetweets) + "");
+                    btnRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
+                    tweet.retweeted = !tweet.retweeted;
+                    client.unreTweet(tweet, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.d("TweetDetailActivity", "succesfully unretweeted");
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.d("TweetDetailActivity", "failed to unretweet");
+                        }
+                    });
+
+                }
 
             }
         });
@@ -133,5 +167,15 @@ public class TweetDetailActivity extends AppCompatActivity {
         }
 
         Glide.with(this).load(tweet.user.profileImageUrl).into(ivProfile);
+
+        tvNumLikes.setText(tweet.numLikes + "");
+        tvNumRetweet.setText(tweet.numRetweets + "");
+
+        if (tweet.retweeted) {
+            btnRetweet.setImageResource(R.drawable.ic_vector_retweet);
+        }
+        if (tweet.liked) {
+            btnLike.setImageResource(R.drawable.ic_vector_heart);
+        }
     }
 }

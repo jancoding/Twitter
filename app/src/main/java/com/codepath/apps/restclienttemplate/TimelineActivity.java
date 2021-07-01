@@ -11,19 +11,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
-import com.codepath.apps.restclienttemplate.models.TweetDao;
-import com.codepath.apps.restclienttemplate.models.TweetWithUser;
-import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.other.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -46,7 +41,6 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
     List<Tweet> tweets;
     TweetsAdapter adapter;
     MenuItem miActionProgressItem;
-    TweetDao tweetDao;
     FloatingActionButton btnCompose;
     private long max_id = 0;
     public static final String TAG = "TimelineActivity";
@@ -60,7 +54,6 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         setContentView(R.layout.activity_timeline);
 
         client = TwitterApp.getRestClient(this);
-        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);

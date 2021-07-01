@@ -47,6 +47,20 @@ public class Tweet {
     @Ignore
     public User user;
 
+    @Ignore
+    public boolean retweeted;
+
+    @Ignore
+    public boolean liked;
+
+    @Ignore
+    public int numRetweets;
+
+    @Ignore
+    public int numLikes;
+
+
+
 
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
@@ -65,6 +79,10 @@ public class Tweet {
         User user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.user = user;
         tweet.userId = user.id;
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.liked = jsonObject.getBoolean("favorited");
+        tweet.numLikes = jsonObject.getInt("favorite_count");
+        tweet.numRetweets = jsonObject.getInt("retweet_count");
         tweet.time = getRelativeTimeAgo(tweet.createdAt);
         tweet.id = jsonObject.getLong("id");
         // url for first image
