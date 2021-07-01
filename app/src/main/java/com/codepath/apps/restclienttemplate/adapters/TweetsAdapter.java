@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.EditTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.ProfileDetailActivity;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.ReplyTweetDialogFragment;
 import com.codepath.apps.restclienttemplate.TimelineActivity;
 import com.codepath.apps.restclienttemplate.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
@@ -88,6 +93,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+
     // Define a viewholder
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -96,7 +102,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         TextView tvTime;
         ImageView ivEntity;
-        EditText etReply;
         ImageButton btnReply;
         TextView tvName;
 
@@ -108,7 +113,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvTime = itemView.findViewById(R.id.tvTime);
             ivEntity = itemView.findViewById(R.id.ivEntity);
-            etReply = itemView.findViewById(R.id.etReply);
             btnReply = itemView.findViewById(R.id.btnReply);
             tvName = itemView.findViewById(R.id.tvName);
             itemView.setOnClickListener(this);
@@ -120,7 +124,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName.setText("@" + tweet.user.screenName);
             tvName.setText(tweet.user.name);
             tvTime.setText(tweet.time);
-            etReply.setText("@" + tweet.user.screenName + " ");
             if (tweet.mediaUrl != "") {
                 Log.d("TweetsAdapter", "loading media");
                 Glide.with(context).
@@ -140,37 +143,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             btnReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String tweetContent = etReply.getText().toString();
-                    if (tweetContent.isEmpty()) {
-                        Toast.makeText(itemView.getContext(), "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (tweetContent.length() > MAX_TWEET_LENGTH) {
-                        Toast.makeText(itemView.getContext(), "Sorry, your tweet is too long", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
 
-                    TwitterClient client = TwitterApp.getRestClient(itemView.getContext());
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("Tweet", Parcels.wrap(tweet));
+                    // set Fragmentclass Arguments
+                    FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+                    ReplyTweetDialogFragment replyTweetDialogFragment = ReplyTweetDialogFragment.newInstance("Some Title");
+                    replyTweetDialogFragment.setArguments(bundle);
+                    replyTweetDialogFragment.show(fm, "fragment_reply_tweet_dialog");
 
-                    client.replyTweet(tweetContent, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Headers headers, JSON json) {
-                            Log.i("TweetsAdapter", "OnSuccess to publish tweet");
-                            try {
-                                Tweet tweet = Tweet.fromJson(json.jsonObject);
-                                Log.i("TweetsAdapter", "Published tweet says: " + tweet.body);
-                                etReply.setText("");
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                            Log.e("TweetsAdapter", "onFailure to publish Tweet", throwable);
-                        }
-                    }, tweet);
 
                 }
             });

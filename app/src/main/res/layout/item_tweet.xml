@@ -75,25 +75,11 @@
         android:layout_marginTop="10dp"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <EditText
-        android:id="@+id/etReply"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_below="@+id/ivEntity"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="0dp"
-        android:textSize="12sp"
-        tools:text="JoeBiden" />
-
     <ImageButton
         android:id="@+id/btnReply"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_below="@+id/etReply"
+        android:layout_below="@+id/ivEntity"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
         android:layout_marginTop="5dp"
@@ -101,5 +87,15 @@
         android:layout_marginBottom="0dp"
         android:background="#DFE8EE"
         android:src="@android:drawable/ic_menu_send" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/ivEntity"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:background="#DFE8EE"
+        app:srcCompat="@drawable/ic_vector_heart_stroke" />
 
 </RelativeLayout>
