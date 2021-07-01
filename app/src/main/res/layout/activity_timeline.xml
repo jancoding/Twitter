@@ -37,7 +37,7 @@
         android:backgroundTint="#1DA1F2"
         android:src="@drawable/ic_vector_compose"
         app:fabSize="normal"
-        app:layout_behavior="com.codepath.apps.restclienttemplate.ScrollAwareFABBehavior" />
+        app:layout_behavior="com.codepath.apps.restclienttemplate.other.ScrollAwareFABBehavior" />
 
 <!--    <Button-->
 <!--        android:id="@+id/btnLogout"-->

@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -28,11 +29,7 @@ import org.parceler.Parcels;
 
 import okhttp3.Headers;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ReplyTweetDialogFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+// Fragment to reply to tweet modal overlay
 public class ReplyTweetDialogFragment extends DialogFragment {
 
     private EditText etReply;
@@ -41,9 +38,6 @@ public class ReplyTweetDialogFragment extends DialogFragment {
     public static final int MAX_TWEET_LENGTH = 140;
     Tweet tweet;
     TwitterClient client;
-
-
-
 
     public ReplyTweetDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -73,8 +67,9 @@ public class ReplyTweetDialogFragment extends DialogFragment {
         btnReplyNow = view.findViewById(R.id.btnReplyNow);
         etReply = view.findViewById(R.id.etReplyTweet);
         client = TwitterApp.getRestClient(getActivity());
-
         etReply.setText("@" + tweet.user.screenName);
+
+        // handles character remaining count
         etReply.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -99,8 +94,7 @@ public class ReplyTweetDialogFragment extends DialogFragment {
         btnReplyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Make an API call to Twitter to tweet
-
+                // handles erreneous cases
                 String tweetContent = etReply.getText().toString();
                 if (tweetContent.isEmpty()) {
                     Toast.makeText(getContext(), "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
@@ -111,8 +105,8 @@ public class ReplyTweetDialogFragment extends DialogFragment {
                     return;
                 }
 
+                // Make an API call to Twitter to tweet
                 TwitterClient client = TwitterApp.getRestClient(getContext());
-
                 client.replyTweet(tweetContent, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -133,15 +127,7 @@ public class ReplyTweetDialogFragment extends DialogFragment {
                         Log.e("TweetsAdapter", "onFailure to publish Tweet", throwable);
                     }
                 }, tweet);
-
-
             }
         });
-
     }
-
-
-
-
-
 }

@@ -13,6 +13,7 @@ public class TweetWithUser {
     @Embedded (prefix = "tweet_")
     Tweet tweet;
 
+    // Takes TweetWithUser object and gets a list of tweets
     public static List<Tweet> getTweetList(List<TweetWithUser> tweetWithUsers) {
         List<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i < tweetWithUsers.size(); i++) {

@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.codepath.apps.restclienttemplate.fragments.EditTweetDialogFragment;
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetDao;
@@ -38,6 +40,7 @@ import java.util.List;
 
 import okhttp3.Headers;
 
+// Main Feed Activity
 public class TimelineActivity extends AppCompatActivity implements EditTweetDialogFragment.EditTweetDialogListener {
 
     TwitterClient client;
@@ -58,11 +61,12 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        // gets Client and Database handling set up
         client = TwitterApp.getRestClient(this);
         tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
 
-        // Find the recycler view
+        // Find the recycler view and compose button
         rvTweets = findViewById(R.id.rvTweets);
         btnCompose = findViewById(R.id.btnCompose);
 
@@ -75,6 +79,7 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(adapter);
 
+        // Scroll Listener for endless scrolling
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -85,14 +90,12 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         };
         rvTweets.setOnScrollListener(scrollListener);
 
+        // Handles fetching new data when refreshing
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 fetchTimelineAsync(0);
             }
         });
@@ -128,14 +131,11 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
             }
         });
 
-
+        // populates the home timeline with tweets
         populateHomeTimeline();
-
-
-
     }
 
-
+    // Loads data from Api when reached end of page
     public void loadNextDataFromApi(long id) {
         client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
             @Override
@@ -161,18 +161,12 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
                 Log.d("DEBUG", "Fetch timeline error: " + response);
             }
         }, id);
-        // Send an API request to retrieve appropriate paginated data
-        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
-        //  --> Deserialize and construct new model objects from the API response
-        //  --> Append the new data objects to the existing set of items inside the array of items
-        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Store instance of the menu item containing progress
         miActionProgressItem = menu.findItem(R.id.miActionProgress);
-
         // Return to finish
         return super.onPrepareOptionsMenu(menu);
     }
@@ -187,6 +181,7 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         miActionProgressItem.setVisible(false);
     }
 
+    // Asynchronously fetches the timeline when refreshing/end of page
     public void fetchTimelineAsync(int page) {
         // Send the network request to fetch the updated data
         // `client` here is an instance of Android Async HTTP
@@ -203,19 +198,15 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
                 hideProgressBar();
-
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.d("DEBUG", "Fetch timeline error: " + response);
             }
-
         });
     }
 
-
-
+    // Main method to populate the home timeline when starting this activity
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
@@ -235,23 +226,18 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i(TAG, "Saving data into database");
-                            // insert users first
-                            List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
-                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
-                            // insert tweets next
-                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        // insert users first
+                        List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
+                        tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                        // insert tweets next
+                        tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
                         }
                     });
-
-
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception");
                     e.printStackTrace();
                 }
-
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.i(TAG, "onFailure!" + response, throwable);
@@ -259,6 +245,7 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         });
     }
 
+    // Helper method to get smallest ID from a list of tweets to know which ones to fetch later
     private static long getMinId(List<Tweet> tweets) {
         long id = Long.MAX_VALUE;
         for (int i = 0; i<tweets.size(); i++) {
@@ -270,13 +257,14 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         return id;
     }
 
-
+    // creates custom action bar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    // handles logging out from action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
@@ -291,6 +279,7 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         return super.onOptionsItemSelected(item);
     }
 
+    // Handles old compose activity result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
@@ -304,22 +293,14 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    public void onClickLogout(View view) {
-//        client.clearAccessToken();
-//        //finish();
-//        Log.d("logging out", "going into logout method");
-//        Intent i = new Intent(this, LoginActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(i);
-//    }
-
+    // Shows the edit dialog for creating a new tweet
     private void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();
         EditTweetDialogFragment editNameDialogFragment = EditTweetDialogFragment.newInstance("Some Title");
         editNameDialogFragment.show(fm, "fragment_edit_tweet");
     }
 
+    //Handles returning from edit dialog after new tweet is sent
     @Override
     public void onFinishEditDialog(Tweet tweet) {
         tweets.add(0, tweet);

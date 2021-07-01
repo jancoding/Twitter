@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.fragments;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.adapters.FollowAdapter;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -25,14 +26,8 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 
 import okhttp3.Headers;
-import ru.noties.scrollable.CanScrollVerticallyDelegate;
-import ru.noties.scrollable.ScrollableLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FollowFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+// Fragment to display followers and following
 public class FollowFragment extends Fragment {
 
     public static final String ARG_PAGE = "ARG_PAGE";
@@ -51,6 +46,7 @@ public class FollowFragment extends Fragment {
         this.page = page;
     }
 
+    // returns a new instance of the follower class
     public static FollowFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
@@ -63,8 +59,6 @@ public class FollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = Parcels.unwrap(getActivity().getIntent().getParcelableExtra("User"));
-
-
     }
 
     @Override
@@ -75,14 +69,15 @@ public class FollowFragment extends Fragment {
         return view;
     }
 
+    // gets followers or following based on tav
     public void setUpFollow(View view) {
         if (this.page == 1) {
             populateFollowers();
         } else {
             populateFollowing();
         }
-
         rvFollow = view.findViewById(R.id.rvFollow);
+
         // Create the adapter
         followAdapter = new FollowAdapter(getActivity(), users);
         rvFollow.addItemDecoration(new MaterialViewPagerHeaderDecorator());
@@ -92,18 +87,15 @@ public class FollowFragment extends Fragment {
         // Set a Layout Manager the recycler view
         rvFollow.setLayoutManager(new LinearLayoutManager(getActivity()));
         // retrieves and displays related movies
-
-
     }
 
+    // populates followers by making a request to TwitterAPI
     public void populateFollowers() {
-        Log.d("FollowFragment", "in populate followers");
         TwitterClient client = new TwitterClient(this.getContext());
         client.getFollowers(user.id_str, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
-                Log.d("FollowFragment", "in populate followers success " + json);
                 try {
                     // get user data and figure out how to parse it
                     JSONArray jsonArray = jsonObject.getJSONArray("users");
@@ -112,29 +104,23 @@ public class FollowFragment extends Fragment {
                         users.add(new User(user.getString("description"), user.getString("name"), user.getString("screen_name"), user.getString("profile_image_url_https"), user.getString("id_str")));
                     }
                     followAdapter.notifyDataSetChanged();
-                    Log.d("FollowFragment", "in populate followers success " + users.size());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.d("FollowFragment", "failed to get ");
             }
         });
     }
 
-
-
+    // populates following by making a request to TwitterAPI
     public void populateFollowing() {
         TwitterClient client = new TwitterClient(this.getContext());
         client.getFollowing(user.id_str, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
-                Log.d("FollowFragment", "in populate followers success " + json);
                 try {
                     // get user data and figure out how to parse it
                     JSONArray jsonArray = jsonObject.getJSONArray("users");
@@ -143,16 +129,12 @@ public class FollowFragment extends Fragment {
                         users.add(new User(user.getString("description"), user.getString("name"), user.getString("screen_name"), user.getString("profile_image_url_https"), user.getString("id_str")));
                     }
                     followAdapter.notifyDataSetChanged();
-                    Log.d("FollowFragment", "in populate followers success " + users.size());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-
             }
         });
     }

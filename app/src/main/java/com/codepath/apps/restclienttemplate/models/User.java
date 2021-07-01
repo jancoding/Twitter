@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+// User model class to represent users in twitter
 @Parcel
 @Entity
 public class User {
@@ -44,6 +45,7 @@ public class User {
 
     }
 
+    // Constructor to se up new User with all information provided
     public User(String description, String name, String screenName, String profileImageUrl, String id) {
         this.name = name;
         this.screenName = screenName;
@@ -52,6 +54,7 @@ public class User {
         this.description = description;
     }
 
+    // Retrieves necessary user information from JSONObject
     public static User fromJson(JSONObject jsonObject) throws JSONException {
         User user = new User();
         user.name = jsonObject.getString("name");
@@ -63,6 +66,7 @@ public class User {
 
     }
 
+    // Takes an array of tweets and returns a result of users
     public static List<User> fromJsonTweetArray(List<Tweet> tweetsFromNetwork) {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < tweetsFromNetwork.size(); i++) {

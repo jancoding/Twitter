@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -25,7 +26,9 @@ import org.json.JSONException;
 
 import okhttp3.Headers;
 
+// Fragment Modal Overlay displayed for new tweet
 public class EditTweetDialogFragment extends DialogFragment{
+
     private EditText etTweet;
     private TextView tvRemain;
     private Button btnTweetNow;
@@ -35,7 +38,6 @@ public class EditTweetDialogFragment extends DialogFragment{
     public interface EditTweetDialogListener {
         void onFinishEditDialog(Tweet tweet);
     }
-
 
     public EditTweetDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -64,17 +66,15 @@ public class EditTweetDialogFragment extends DialogFragment{
         btnTweetNow = view.findViewById(R.id.btnTweetNow);
         etTweet = view.findViewById(R.id.etTweet);
         client = TwitterApp.getRestClient(getActivity());
-       // btnTweetNow.setOnEditorActionListener(this);
 
+        // Updates remaining character count
         etTweet.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -86,12 +86,11 @@ public class EditTweetDialogFragment extends DialogFragment{
             }
         });
 
-
+        // Posts tweet after done composing
         btnTweetNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Make an API call to Twitter to tweet
-
+                //handles erreneous cases
                 String tweetContent = etTweet.getText().toString();
                 if (tweetContent.isEmpty()) {
                     Toast.makeText(getActivity(), "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
@@ -102,8 +101,7 @@ public class EditTweetDialogFragment extends DialogFragment{
                     return;
                 }
 
-                Log.i("EditTweetDialogFragment", "Published tweet going to say: " + tweetContent);
-
+                // Make an API call to Twitter to tweet
                 client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -119,16 +117,12 @@ public class EditTweetDialogFragment extends DialogFragment{
                             e.printStackTrace();
                         }
                     }
-
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                         Log.e("EditTweetDialogFragment", "onFailure to publish Tweet", throwable);
                     }
                 });
-
-
             }
         });
-
     }
 }

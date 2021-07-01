@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.codepath.apps.restclienttemplate.FollowFragment;
+import com.codepath.apps.restclienttemplate.fragments.FollowFragment;
 
+// Adapter for tab layout/view pager
 public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-    // number of tabs in his PageAdapter
+
+    // number of tabs in this PageAdapter
     int PAGE_COUNT;
     // titles of each tab
     private String tabTitles[];
@@ -20,7 +22,6 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
         this.context = context;
         PAGE_COUNT = 2;
         tabTitles = new String[] { "Followers", "Following" };
-
     }
 
     // returns page count
@@ -42,4 +43,5 @@ public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
         // Generate title based on item position
         return tabTitles[position];
     }
+
 }

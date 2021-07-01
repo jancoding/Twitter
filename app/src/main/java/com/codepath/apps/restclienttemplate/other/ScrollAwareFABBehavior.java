@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.other;
 
 import android.content.Context;
 import android.util.AttributeSet;

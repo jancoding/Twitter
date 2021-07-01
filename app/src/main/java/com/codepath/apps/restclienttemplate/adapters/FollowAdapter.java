@@ -16,24 +16,26 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.User;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+// Adapter for the Followers/Following Page to display Users
 public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder> {
 
+    // List of users (changes based on following or follower tab)
     public List<User> users;
     Context context;
 
+    // Constructor to set users list and context
     public FollowAdapter(Context context, List<User> users) {
         this.context = context;
-        Log.d("FollowAdapter", "got an array list user with " + users.size());
         this.users = users;
     }
 
 
+    // Override method to create view holder and set layout to item_follow.xml
     @NonNull
     @NotNull
     @Override
@@ -42,23 +44,31 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    // Binds the user as specified position to ViewHolder
     @Override
     public void onBindViewHolder(@NonNull @NotNull FollowAdapter.ViewHolder holder, int position) {
         User user = users.get(position);
         holder.bind(user);
     }
 
+    // Number of users
     @Override
     public int getItemCount() {
         return users.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        // Handle of user
         TextView userName;
+        // User's actual name
         TextView name;
+        // Description of user
         TextView description;
+        // Profile Image of User
         ImageView ivProfileImage;
 
+        // Bind view components to variables
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.tvUser);
@@ -67,8 +77,8 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
         }
 
+        // Set view components
         public void bind(User user) {
-            Log.d("FollowAdapter", "binding user with " + user.id);
             userName.setText(user.screenName);
             name.setText(user.name);
             description.setText(user.description);

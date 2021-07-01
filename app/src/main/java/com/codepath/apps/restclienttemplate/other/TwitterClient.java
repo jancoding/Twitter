@@ -46,11 +46,18 @@ public class TwitterClient extends OAuthBaseClient {
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
+
+	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
+	 * 	  i.e getApiUrl("statuses/home_timeline.json");
+	 * 2. Define the parameters to pass to the request (query or body)
+	 *    i.e RequestParams params = new RequestParams("foo", "bar");
+	 * 3. Define the request method and make a call to the client
+	 *    i.e client.get(apiUrl, params, handler);
+	 *    i.e client.post(apiUrl, params, handler);
+	 */
+
 	public void getHomeTimeline(JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
@@ -58,25 +65,16 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	public void getMoreHomeTimeline(JsonHttpResponseHandler handler, long maxid) {
-		Log.d("TwitterClient", "In get MoreHomeTimeline");
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
-		Log.d("TwitterClient", "" + maxid*-1);
-
-		// TODO: need to fix and understand max id
 		params.put("count", 25);
 		params.put("max_id", maxid-1);
-//		params.put("count", 25);
-//		params.put("since_id", 1);
-
+		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
-
 	}
 
 	public void publishTweet(String tweetContent, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/update.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
 		client.post(apiUrl, params,"", handler);
@@ -84,7 +82,6 @@ public class TwitterClient extends OAuthBaseClient {
 
 	public void favoriteTweet(Tweet tweet, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("favorites/create.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("id",tweet.id);
 		client.post(apiUrl, params,"", handler);
@@ -100,27 +97,19 @@ public class TwitterClient extends OAuthBaseClient {
 	public void reTweet(Tweet tweet, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/retweet/");
 		apiUrl  = apiUrl + tweet.id + ".json";
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
-//		params.put("id", tweet.max_id);
 		client.post(apiUrl, params,"", handler);
 	}
-
 
 	public void unreTweet(Tweet tweet, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/unretweet/");
 		apiUrl  = apiUrl + tweet.id + ".json";
 		RequestParams params = new RequestParams();
-//		params.put("id", tweet.id);
 		client.post(apiUrl, params,"", handler);
 	}
 
-
-
-
 	public void replyTweet(String tweetContent, JsonHttpResponseHandler handler, Tweet tweet) {
 		String apiUrl = getApiUrl("statuses/update.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
 		params.put("in_reply_to_status_id", tweet.id);
@@ -129,31 +118,17 @@ public class TwitterClient extends OAuthBaseClient {
 
 	public void getFollowers(String userid, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("followers/list.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("user_id", userid);
 		client.get(apiUrl, params, handler);
 
 	}
-
-
 
 	public void getFollowing(String userid, JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("friends/list.json");
-		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("user_id", userid);
 		client.get(apiUrl, params, handler);
 	}
 
-
-
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
 }

@@ -9,11 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,19 +20,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.codepath.apps.restclienttemplate.EditTweetDialogFragment;
-import com.codepath.apps.restclienttemplate.ProfileDetailActivity;
+import com.codepath.apps.restclienttemplate.activities.ProfileDetailActivity;
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.ReplyTweetDialogFragment;
-import com.codepath.apps.restclienttemplate.TimelineActivity;
-import com.codepath.apps.restclienttemplate.TweetDetailActivity;
+import com.codepath.apps.restclienttemplate.fragments.ReplyTweetDialogFragment;
+import com.codepath.apps.restclienttemplate.activities.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -42,13 +37,14 @@ import java.util.List;
 import okhttp3.Headers;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+// Adapter for tweets on TimelineActivity
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
     Context context;
+    // List of tweets to display
     List<Tweet> tweets;
-    public static final int MAX_TWEET_LENGTH = 140;
 
-
+    // Constructor for TweetsAdapter
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
         this.tweets = tweets;
@@ -64,7 +60,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     // Bind values based on the position of the element
-
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
         // Get the data at position
@@ -73,13 +68,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         holder.bind(tweet);
     }
 
-
-
+    // Returns number of items in RecyclerView
     @Override
     public int getItemCount() {
         return tweets.size();
     }
-
 
     // Clean all elements of the recycler
     public void clear() {
@@ -94,9 +87,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
 
-    // Define a viewholder
+    // Define a ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        // All components of View for each Tweet
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
@@ -106,11 +100,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageButton btnHeart;
         ImageButton btnRetweetMain;
         TextView tvName;
-        TextView tvnumLiked;
-        TextView tvnumRetweet;
+        TextView tvNumLiked;
+        TextView tvNumRetweet;
 
 
-
+        // Bind each variable above to view component
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             ivProfileImage = itemView.findViewById(R.id.ivProfile);
@@ -122,26 +116,34 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName = itemView.findViewById(R.id.tvName);
             btnHeart = itemView.findViewById(R.id.btnHeart);
             btnRetweetMain = itemView.findViewById(R.id.btnRetweetMain);
-            tvnumLiked = itemView.findViewById(R.id.tvNumLiked);
-            tvnumRetweet = itemView.findViewById(R.id.tvNumRetweet);
+            tvNumLiked = itemView.findViewById(R.id.tvNumLiked);
+            tvNumRetweet = itemView.findViewById(R.id.tvNumRetweet);
             itemView.setOnClickListener(this);
         }
 
-
+        // binds each tweet to recycler view item
         public void bind(final Tweet tweet) {
+            /* Determines image for retweet and like dependent on if tweet has
+            / been liked or retweeted before*/
             if (tweet.retweeted) {
                 btnRetweetMain.setImageResource(R.drawable.ic_vector_retweet);
             }
             if (tweet.liked) {
                 btnHeart.setImageResource(R.drawable.ic_vector_heart);
             }
-            tvnumLiked.setText(tweet.numLikes + "");
-            tvnumRetweet.setText(tweet.numRetweets + "");
+
+            // Sets TextView for number of likes and number of retweets
+            tvNumLiked.setText(tweet.numLikes + "");
+            tvNumRetweet.setText(tweet.numRetweets + "");
+
+            // Sets TextViews for tweet body, user screen name, user name, tweet time
             tvBody.setText(tweet.body);
             tvScreenName.setText("@" + tweet.user.screenName);
             tvName.setText(tweet.user.name);
             tvTime.setText(tweet.time);
-            if (tweet.mediaUrl != "") {
+
+            // If media in the tweet exits, loads the media
+            if (tweet.mediaUrl != "" || tweet.mediaUrl == null) {
                 Log.d("TweetsAdapter", "loading media");
                 Glide.with(context).
                         load(tweet.mediaUrl + ":thumb")
@@ -150,31 +152,31 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivEntity.setVisibility(View.GONE);
             }
 
-
+            // Sets the Tint of the buttons to be TwitterBlue
             btnReply.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
             btnHeart.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
             btnRetweetMain.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
 
+            // Loads the user's profile image
             Glide.with(context)
                     .load(tweet.user.profileImageUrl)
                     .transform(new RoundedCornersTransformation(30, 0))
                     .into(ivProfileImage);
+
+            // Listener for Reply Button, Launches ReplyTweetDialogFragment and passes tweet
             btnReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("Tweet", Parcels.wrap(tweet));
-                    // set Fragmentclass Arguments
                     FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
                     ReplyTweetDialogFragment replyTweetDialogFragment = ReplyTweetDialogFragment.newInstance("Some Title");
                     replyTweetDialogFragment.setArguments(bundle);
                     replyTweetDialogFragment.show(fm, "fragment_reply_tweet_dialog");
-
-
                 }
             });
 
+            // Listener for ProfileImageButton, launches ProfileDetailActivity and passes user
             ivProfileImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -185,33 +187,37 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 }
             });
 
+            // Listener for heart button click, likes/unlikes tweet
             btnHeart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // new client to like/unlike tweet
                     TwitterClient client = TwitterApp.getRestClient(itemView.getContext());
 
+                    /* If the tweet is not already liked, like it and update necessary variables
+                    else the tweet has been liked and we should unlike it and update necessary
+                    variables
+                     */
                     if (!tweet.liked) {
                         btnHeart.setImageResource(R.drawable.ic_vector_heart);
                         tweet.liked = !tweet.liked;
                         tweet.numLikes += 1;
-                        tvnumLiked.setText((tweet.numLikes) + "");
+                        tvNumLiked.setText((tweet.numLikes) + "");
                         client.favoriteTweet(tweet, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                                Log.d("TweetDetailActivity", "succesfully liked");
+                                Log.d("TweetDetailActivity", "Successfully liked");
                             }
-
                             @Override
                             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                                Log.d("TweetDetailActivity", "failed to liked");
+                                Log.d("TweetDetailActivity", "Failed to like");
                             }
                         });
-
                     } else {
                         btnHeart.setImageResource(R.drawable.ic_vector_heart_stroke);
                         tweet.liked = !tweet.liked;
                         tweet.numLikes -= 1;
-                        tvnumLiked.setText((tweet.numLikes) + "");
+                        tvNumLiked.setText((tweet.numLikes) + "");
                         client.unlikeTweet(tweet, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -228,71 +234,63 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             });
 
 
+            // Listener for retweet button click, retweets/unretweets tweet
             btnRetweetMain.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // gets access to twitter client to performing retweeting actions
                     TwitterClient client = TwitterApp.getRestClient(itemView.getContext());
+
+                    /* If the tweet is not already retweeted, retweet it and update necessary variables
+                    else the tweet has been retweeted and we should unretweet it and update necessary
+                    variables
+                     */
                     if (!tweet.retweeted) {
                         btnRetweetMain.setImageResource(R.drawable.ic_vector_retweet);
                         tweet.retweeted = !tweet.retweeted;
                         tweet.numRetweets += 1;
-                        tvnumRetweet.setText((tweet.numRetweets) + "");
+                        tvNumRetweet.setText((tweet.numRetweets) + "");
                         client.reTweet(tweet, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
                                 Log.d("TweetDetailActivity", "succesfully retweeted");
                             }
-
                             @Override
                             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                                 Log.d("TweetDetailActivity", "failed to retweet");
                             }
                         });
-
                     } else {
                         btnRetweetMain.setImageResource(R.drawable.ic_vector_retweet_stroke);
                         tweet.retweeted = !tweet.retweeted;
                         tweet.numRetweets -= 1;
-                        tvnumRetweet.setText((tweet.numRetweets) + "");
+                        tvNumRetweet.setText((tweet.numRetweets) + "");
                         client.unreTweet(tweet, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
                                 Log.d("TweetDetailActivity", "succesfully unretweeted");
                             }
-
                             @Override
                             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                                 Log.d("TweetDetailActivity", "failed to unretweet");
                             }
                         });
-
                     }
-
-
                 }
             });
-
-
-
-
-
-
-
         }
 
+        // Click listener for whole RecyclerView item to take to DetailView and pass tweet
         @Override
         public void onClick(View view) {
             Log.d("TweetsAdapter", "in here");
-            // create intent to pass tweet and go to detail view
             Tweet tweet = tweets.get(getAdapterPosition());
             Intent intent = new Intent(view.getContext(), TweetDetailActivity.class);
             intent.putExtra("tweet", Parcels.wrap(tweet));
+            // animation for shared profile image
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation((Activity) view.getContext(), (View) ivProfileImage, "profile");
             view.getContext().startActivity(intent, options.toBundle());
-
-
-
         }
     }
 }

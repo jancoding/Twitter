@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.SampleModel;
 import com.codepath.apps.restclienttemplate.models.SampleModelDao;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
@@ -26,12 +27,9 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 		setContentView(R.layout.activity_login);
 		rlLogin = findViewById(R.id.rlLogin);
 		rlLogin.setBackgroundColor(Color.rgb(29 ,161 ,242));
-
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");
-
 		sampleModelDao = ((TwitterApp) getApplicationContext()).getMyDatabase().sampleModelDao();
-
 		AsyncTask.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -39,7 +37,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 			}
 		});
 	}
-
 
 	// Inflate the menu; this adds items to the action bar if it is present.
 	@Override

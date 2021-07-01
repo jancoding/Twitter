@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Objects.isNull;
-
+// Model class for a Tweet with annotations to store in Room Database
 @Parcel
 @Entity(foreignKeys = @ForeignKey(entity=User.class, parentColumns="id", childColumns="userId"))
 public class Tweet {
@@ -59,9 +58,6 @@ public class Tweet {
     @ColumnInfo
     public int numLikes;
 
-
-
-
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
@@ -71,7 +67,7 @@ public class Tweet {
 
     }
 
-
+    // setting up all variables for tweets
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
         tweet.body = jsonObject.getString("text");
@@ -85,28 +81,22 @@ public class Tweet {
         tweet.numRetweets = jsonObject.getInt("retweet_count");
         tweet.time = getRelativeTimeAgo(tweet.createdAt);
         tweet.id = jsonObject.getLong("id");
-        // url for first image
         tweet.mediaUrl = getEntity(jsonObject.getJSONObject("entities"));
-        Log.d("record", tweet.user.name + "    " + tweet.mediaUrl);
-
         return tweet;
     }
 
     // retrieves url for first image in entity object in JSONResponse
     public static String getEntity(JSONObject jsonObject) throws JSONException {
-        // returns null if no image exists
         JSONArray allMedia = jsonObject.has("media") ? jsonObject.getJSONArray("media") : null;
         String url = "";
         if (allMedia != null) {
             url =  allMedia.getJSONObject(0).getString("media_url_https");
         }
         Log.d("Tweet", url);
-
-        // with url if image exists else empty
         return url;
     }
 
-
+    // gets list of Tweet objects from jsonArray response
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i<jsonArray.length(); i++) {
@@ -115,8 +105,7 @@ public class Tweet {
         return tweets;
     }
 
-
-
+    // function to convert rawJsonDate time to abbreviation
     public static String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
@@ -125,7 +114,6 @@ public class Tweet {
         try {
             long time = sf.parse(rawJsonDate).getTime();
             long now = System.currentTimeMillis();
-
             final long diff = now - time;
             if (diff < MINUTE_MILLIS) {
                 return "just now";
@@ -146,7 +134,6 @@ public class Tweet {
             Log.i("Tweet", "getRelativeTimeAgo failed");
             e.printStackTrace();
         }
-
         return "";
     }
 

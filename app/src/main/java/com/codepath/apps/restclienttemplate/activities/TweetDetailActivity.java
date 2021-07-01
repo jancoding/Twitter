@@ -1,8 +1,7 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -23,6 +23,7 @@ import org.parceler.Parcels;
 
 import okhttp3.Headers;
 
+// Class to display tweets in a larger detail view
 public class TweetDetailActivity extends AppCompatActivity {
 
     ImageView ivProfile;
@@ -43,7 +44,6 @@ public class TweetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tweet_detail);
 
-
         // bind to view
         ivProfile = findViewById(R.id.ivProfile);
         tvScreenName = findViewById(R.id.tvScreenName);
@@ -56,17 +56,16 @@ public class TweetDetailActivity extends AppCompatActivity {
         tvNumLikes = findViewById(R.id.tvNumLiked);
         tvNumRetweet = findViewById(R.id.tvNumRetweet);
 
-
+        // Sets tint for necessary buttons
         btnLike.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
         btnRetweet.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
         btnReply.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
 
-
+        // On Click listener for like button - same structure as in TweetsAdapter
         btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TwitterClient client = TwitterApp.getRestClient(TweetDetailActivity.this);
-
                 if (!tweet.liked) {
                     btnLike.setImageResource(R.drawable.ic_vector_heart);
                     tweet.liked = !tweet.liked;
@@ -83,7 +82,6 @@ public class TweetDetailActivity extends AppCompatActivity {
                             Log.d("TweetDetailActivity", "failed to liked");
                         }
                     });
-
                 } else {
                     btnLike.setImageResource(R.drawable.ic_vector_heart_stroke);
                     tweet.liked = !tweet.liked;
@@ -104,11 +102,12 @@ public class TweetDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Sets ActionBar to correct color and title
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1DA1F2")));
         actionBar.setTitle("Twitter");
 
-
+        // On Click listener for retweet button - same structure as in TweetsAdapter
         btnRetweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,19 +117,16 @@ public class TweetDetailActivity extends AppCompatActivity {
                     tweet.retweeted = !tweet.retweeted;
                     tweet.numRetweets += 1;
                     tvNumRetweet.setText((tweet.numRetweets) + "");
-
                     client.reTweet(tweet, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
                             Log.d("TweetDetailActivity", "succesfully retweeted");
                         }
-
                         @Override
                         public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                             Log.d("TweetDetailActivity", "failed to retweet");
                         }
                     });
-
                 } else {
                     tweet.numRetweets -= 1;
                     tvNumRetweet.setText((tweet.numRetweets) + "");
@@ -141,20 +137,17 @@ public class TweetDetailActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
                             Log.d("TweetDetailActivity", "succesfully unretweeted");
                         }
-
                         @Override
                         public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                             Log.d("TweetDetailActivity", "failed to unretweet");
                         }
                     });
-
                 }
-
             }
         });
 
 
-        // get information from intent
+        // get information from intent and loads tweet - similar to TweetsAdapter
         tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
         tvBody.setText(tweet.body);
         tvScreenName.setText(tweet.user.screenName);
@@ -165,12 +158,9 @@ public class TweetDetailActivity extends AppCompatActivity {
         } else {
             ivEntity.setVisibility(View.GONE);
         }
-
         Glide.with(this).load(tweet.user.profileImageUrl).into(ivProfile);
-
         tvNumLikes.setText(tweet.numLikes + "");
         tvNumRetweet.setText(tweet.numRetweets + "");
-
         if (tweet.retweeted) {
             btnRetweet.setImageResource(R.drawable.ic_vector_retweet);
         }
@@ -178,4 +168,5 @@ public class TweetDetailActivity extends AppCompatActivity {
             btnLike.setImageResource(R.drawable.ic_vector_heart);
         }
     }
+
 }
