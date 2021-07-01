@@ -15,6 +15,7 @@ import com.codepath.apps.restclienttemplate.adapters.FollowAdapter;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,8 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 
 import okhttp3.Headers;
+import ru.noties.scrollable.CanScrollVerticallyDelegate;
+import ru.noties.scrollable.ScrollableLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +64,7 @@ public class FollowFragment extends Fragment {
         super.onCreate(savedInstanceState);
         user = Parcels.unwrap(getActivity().getIntent().getParcelableExtra("User"));
 
+
     }
 
     @Override
@@ -81,6 +85,8 @@ public class FollowFragment extends Fragment {
         rvFollow = view.findViewById(R.id.rvFollow);
         // Create the adapter
         followAdapter = new FollowAdapter(getActivity(), users);
+        rvFollow.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+
         // Set the adapter on the recycler view
         rvFollow.setAdapter(followAdapter);
         // Set a Layout Manager the recycler view
