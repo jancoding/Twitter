@@ -11,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +20,9 @@ import android.view.View;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDao;
+import com.codepath.apps.restclienttemplate.models.TweetWithUser;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.other.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -42,6 +46,7 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
     TweetsAdapter adapter;
     MenuItem miActionProgressItem;
     FloatingActionButton btnCompose;
+    TweetDao tweetDao;
     private long max_id = 0;
     public static final String TAG = "TimelineActivity";
     private final int REQUEST_CODE = 20;
@@ -54,6 +59,8 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         setContentView(R.layout.activity_timeline);
 
         client = TwitterApp.getRestClient(this);
+        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
+
 
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
@@ -109,6 +116,19 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1DA1F2")));
         actionBar.setTitle("Twitter");
 
+        // Query for existing tweets in the DB
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "Showing data from databse");
+                List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
+                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
+                adapter.clear();
+                adapter.addAll(tweetsFromDB);
+            }
+        });
+
+
         populateHomeTimeline();
 
 
@@ -117,10 +137,10 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
 
 
     public void loadNextDataFromApi(long id) {
-        showProgressBar();
         client.getMoreHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
+                showProgressBar();
                 try {
                     JSONArray jsonArray = json.jsonArray;
                     Log.i(TAG, "onSuccess!" + json.toString());
@@ -204,12 +224,25 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
                 Log.i(TAG, "onSuccess!" + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
+                    final List<Tweet> tweetsFromNetwork = Tweet.fromJsonArray(jsonArray);
                     adapter.clear();
-                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    tweets.addAll(tweetsFromNetwork);
                     Log.i(TAG, "onSuccess " + tweets.size());
                     max_id = getMinId(tweets);
                     adapter.notifyDataSetChanged();
                     hideProgressBar();
+
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i(TAG, "Saving data into database");
+                            // insert users first
+                            List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                            // insert tweets next
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
 
 
                 } catch (JSONException e) {

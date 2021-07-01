@@ -99,7 +99,7 @@ public class FollowFragment extends Fragment {
     public void populateFollowers() {
         Log.d("FollowFragment", "in populate followers");
         TwitterClient client = new TwitterClient(this.getContext());
-        client.getFollowers(user.id, new JsonHttpResponseHandler() {
+        client.getFollowers(user.id_str, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;
@@ -130,7 +130,7 @@ public class FollowFragment extends Fragment {
 
     public void populateFollowing() {
         TwitterClient client = new TwitterClient(this.getContext());
-        client.getFollowing(user.id, new JsonHttpResponseHandler() {
+        client.getFollowing(user.id_str, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONObject jsonObject = json.jsonObject;

@@ -42,21 +42,21 @@ public class Tweet {
     public String mediaUrl;
 
     @ColumnInfo
-    public String userId;
+    public long userId;
 
     @Ignore
     public User user;
 
-    @Ignore
+    @ColumnInfo
     public boolean retweeted;
 
-    @Ignore
+    @ColumnInfo
     public boolean liked;
 
-    @Ignore
+    @ColumnInfo
     public int numRetweets;
 
-    @Ignore
+    @ColumnInfo
     public int numLikes;
 
 

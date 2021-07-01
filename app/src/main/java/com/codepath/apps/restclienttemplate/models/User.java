@@ -21,10 +21,11 @@ import javax.annotation.Nullable;
 public class User {
 
     @ColumnInfo
-    @Nullable
-    @NonNull
     @PrimaryKey
-    public String id;
+    public long id;
+
+    @ColumnInfo
+    public String id_str;
 
     @ColumnInfo
     public String name;
@@ -47,7 +48,7 @@ public class User {
         this.name = name;
         this.screenName = screenName;
         this.profileImageUrl = profileImageUrl;
-        this.id = id;
+        this.id_str = id;
         this.description = description;
     }
 
@@ -56,7 +57,8 @@ public class User {
         user.name = jsonObject.getString("name");
         user.screenName = jsonObject.getString("screen_name");
         user.profileImageUrl = jsonObject.getString("profile_image_url_https");
-        user.id = jsonObject.getString("id_str");
+        user.id_str = jsonObject.getString("id_str");
+        user.id = jsonObject.getLong("id");
         return user;
 
     }
