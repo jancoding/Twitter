@@ -1,11 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.codepath.apps.restclienttemplate.models.SampleModel;
 import com.codepath.apps.restclienttemplate.models.SampleModelDao;
@@ -16,11 +18,14 @@ import com.codepath.oauth.OAuthLoginActionBarActivity;
 public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
 	SampleModelDao sampleModelDao;
+	RelativeLayout rlLogin;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		rlLogin = findViewById(R.id.rlLogin);
+		rlLogin.setBackgroundColor(Color.rgb(29 ,161 ,242));
 
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");

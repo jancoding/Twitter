@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import okhttp3.Headers;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -112,15 +114,23 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
             tvTime.setText(tweet.time);
-            etReply.setText("@" + tweet.user.screenName);
+            etReply.setText("@" + tweet.user.screenName + " ");
             if (tweet.mediaUrl != "") {
                 Log.d("TweetsAdapter", "loading media");
-                Glide.with(context).load(tweet.mediaUrl + ":thumb").into(ivEntity);
+                Glide.with(context).
+                        load(tweet.mediaUrl + ":thumb")
+                        .into(ivEntity);
             } else {
                 ivEntity.setVisibility(View.GONE);
             }
 
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+
+            btnReply.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
+
+            Glide.with(context)
+                    .load(tweet.user.profileImageUrl)
+                    .transform(new RoundedCornersTransformation(30, 0))
+                    .into(ivProfileImage);
             btnReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

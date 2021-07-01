@@ -1,7 +1,11 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +53,10 @@ public class TweetDetailActivity extends AppCompatActivity {
         btnRetweet.setImageResource(R.drawable.ic_vector_retweet);
         btnLike.setImageResource(R.drawable.ic_vector_heart_stroke);
 
+        btnLike.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
+        btnRetweet.setColorFilter(Color.rgb(29,161,242), android.graphics.PorterDuff.Mode.SRC_IN);
+
+
         btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +94,10 @@ public class TweetDetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1DA1F2")));
+        actionBar.setTitle("Twitter");
 
 
         btnRetweet.setOnClickListener(new View.OnClickListener() {

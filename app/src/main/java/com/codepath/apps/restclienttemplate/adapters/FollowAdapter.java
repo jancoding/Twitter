@@ -5,11 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.User;
 
@@ -17,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Text;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder> {
 
@@ -53,12 +57,14 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         TextView userName;
         TextView name;
         TextView description;
+        ImageView ivProfileImage;
 
         public ViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.tvUser);
             name = itemView.findViewById(R.id.tvName);
             description = itemView.findViewById(R.id.tvDescription);
+            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
         }
 
         public void bind(User user) {
@@ -66,6 +72,10 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
             userName.setText(user.screenName);
             name.setText(user.name);
             description.setText(user.description);
+            Glide.with(context)
+                    .load(user.profileImageUrl)
+                    .transform(new RoundedCornersTransformation(30, 0))
+                    .into(ivProfileImage);
         }
     }
 }

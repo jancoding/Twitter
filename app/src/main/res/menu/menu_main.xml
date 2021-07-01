@@ -8,9 +8,11 @@
         android:orderInCategory="100"
         app:showAsAction="always"
         app:actionLayout="@layout/action_view_progress" />
+
     <item
-        android:id="@+id/compose"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Compose"
+        android:id="@+id/action_logout"
+        android:title="Logout"
+        android:orderInCategory="100"
         app:showAsAction="always" />
+
 </menu>

@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -24,6 +28,7 @@ import com.codepath.apps.restclienttemplate.other.EndlessRecyclerViewScrollListe
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +46,8 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
     List<Tweet> tweets;
     TweetsAdapter adapter;
     MenuItem miActionProgressItem;
-//    TweetDao tweetDao;
+    TweetDao tweetDao;
+    FloatingActionButton btnCompose;
     private long max_id = 0;
     public static final String TAG = "TimelineActivity";
     private final int REQUEST_CODE = 20;
@@ -54,10 +60,11 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         setContentView(R.layout.activity_timeline);
 
         client = TwitterApp.getRestClient(this);
-//        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
+        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
         // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
+        btnCompose = findViewById(R.id.btnCompose);
 
         // Init the list of tweets and adapter
         tweets = new ArrayList<>();
@@ -89,24 +96,26 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
                 fetchTimelineAsync(0);
             }
         });
+
+        // compose floating action button listener
+        btnCompose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEditDialog();
+            }
+        });
+
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        // get action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1DA1F2")));
+        actionBar.setTitle("Twitter");
 
-        // Query for existing tweets in the DB
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "Showing data from database");
-//                List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
-//                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
-//                adapter.clear();
-//                adapter.addAll(tweetsFromDB);
-//            }
-//        });
         populateHomeTimeline();
 
 
@@ -244,9 +253,14 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.compose) {
-            showEditDialog();
-            return true;
+        if (item.getItemId() == R.id.action_logout) {
+            client.clearAccessToken();
+            //finish();
+            Log.d("logging out", "going into logout method");
+            Intent i = new Intent(this, LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -264,15 +278,15 @@ public class TimelineActivity extends AppCompatActivity implements EditTweetDial
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onClickLogout(View view) {
-        client.clearAccessToken();
-        //finish();
-        Log.d("logging out", "going into logout method");
-        Intent i = new Intent(this, LoginActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-    }
+//    public void onClickLogout(View view) {
+//        client.clearAccessToken();
+//        //finish();
+//        Log.d("logging out", "going into logout method");
+//        Intent i = new Intent(this, LoginActivity.class);
+//        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(i);
+//    }
 
     private void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();

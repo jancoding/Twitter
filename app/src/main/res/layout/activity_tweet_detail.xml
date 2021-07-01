@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tvBodyDetail"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp">
 
@@ -61,25 +61,26 @@
 
     <ImageButton
         android:id="@+id/btnRetweet"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
         android:layout_below="@+id/ivEntity"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="13dp"
         android:layout_marginBottom="433dp"
         tools:srcCompat="@drawable/ic_vector_retweet" />
 
     <ImageButton
         android:id="@+id/btnLike"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
         android:layout_below="@+id/ivEntity"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginStart="206dp"
-        android:layout_marginTop="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="187dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="333dp"
         tools:srcCompat="@drawable/ic_vector_heart_stroke" />
 
