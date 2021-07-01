@@ -8,6 +8,7 @@
     android:background="#E1E8ED">
 
     <ImageView
+        android:transitionName="profile"
         android:id="@+id/ivProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -22,33 +23,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/ivProfile"
-        tools:text="dfdsajflksjlfkjdslkfjlks" />
+        android:layout_toRightOf="@+id/tvName"
+        android:textSize="16sp"
+        tools:text="@JanviShah" />
 
     <TextView
         android:id="@+id/tvBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvScreenName"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfile"
         android:autoLink="all"
         tools:text="this is my tweet!" />
 
     <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/ivProfile"
+        android:text="Janvi Shah"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="Janvi Shah" />
+
+    <TextView
         android:id="@+id/tvTime"
-        android:layout_width="65dp"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
         android:layout_toEndOf="@+id/tvScreenName"
-        android:text="TextView" />
+        android:gravity="right"
+        android:text="3m"
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/ivEntity"

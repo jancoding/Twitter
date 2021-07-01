@@ -8,6 +8,7 @@
     android:layout_margin="5dp">
 
     <ImageView
+        android:transitionName="profile"
         android:id="@+id/ivProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -69,6 +70,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="13dp"
         android:layout_marginBottom="433dp"
+        android:background="#FAFAFA"
         tools:srcCompat="@drawable/ic_vector_retweet" />
 
     <ImageButton
@@ -82,6 +84,7 @@
         android:layout_marginStart="187dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="333dp"
+        android:background="#FAFAFA"
         tools:srcCompat="@drawable/ic_vector_heart_stroke" />
 
 </RelativeLayout>

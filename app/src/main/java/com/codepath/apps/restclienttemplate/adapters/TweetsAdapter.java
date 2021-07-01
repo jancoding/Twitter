@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,11 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.ProfileDetailActivity;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TimelineActivity;
 import com.codepath.apps.restclienttemplate.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.other.TwitterApp;
 import com.codepath.apps.restclienttemplate.other.TwitterClient;
@@ -95,6 +98,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivEntity;
         EditText etReply;
         ImageButton btnReply;
+        TextView tvName;
 
 
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -106,13 +110,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivEntity = itemView.findViewById(R.id.ivEntity);
             etReply = itemView.findViewById(R.id.etReply);
             btnReply = itemView.findViewById(R.id.btnReply);
+            tvName = itemView.findViewById(R.id.tvName);
             itemView.setOnClickListener(this);
         }
 
 
         public void bind(final Tweet tweet) {
             tvBody.setText(tweet.body);
-            tvScreenName.setText(tweet.user.screenName);
+            tvScreenName.setText("@" + tweet.user.screenName);
+            tvName.setText(tweet.user.name);
             tvTime.setText(tweet.time);
             etReply.setText("@" + tweet.user.screenName + " ");
             if (tweet.mediaUrl != "") {
@@ -187,7 +193,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             Tweet tweet = tweets.get(getAdapterPosition());
             Intent intent = new Intent(view.getContext(), TweetDetailActivity.class);
             intent.putExtra("tweet", Parcels.wrap(tweet));
-            view.getContext().startActivity(intent);
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation((Activity) view.getContext(), (View) ivProfileImage, "profile");
+            view.getContext().startActivity(intent, options.toBundle());
+
+
+
         }
     }
 }
