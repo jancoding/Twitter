@@ -69,7 +69,6 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("max_id", maxid-1);
-		params.put("tweet_mode", "extended");
 		client.get(apiUrl, params, handler);
 	}
 

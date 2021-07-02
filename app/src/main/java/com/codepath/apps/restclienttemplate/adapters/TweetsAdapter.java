@@ -143,7 +143,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvTime.setText(tweet.time);
 
             // If media in the tweet exits, loads the media
-            if (tweet.mediaUrl != "" || tweet.mediaUrl == null) {
+            Log.d("TweetsAdapter", tweet.mediaUrl + "");
+            if (tweet.mediaUrl != "") {
+                ivEntity.setVisibility(View.VISIBLE);
                 Log.d("TweetsAdapter", "loading media");
                 Glide.with(context).
                         load(tweet.mediaUrl + ":thumb")
