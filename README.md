@@ -54,6 +54,7 @@ GIF created with [Kap](https://getkap.co/).
 
 Describe any challenges encountered while building the app.
 - RecyclerView recycling images from other tweets 
+- MaxID being too big for an integer, need to store in log or string
 
 ## Open-source libraries used
 
