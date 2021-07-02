@@ -1,8 +1,8 @@
-# Project 3 - *Name of App Here*
+# Project 3 - *Twittere*
 
 **Name of your app** is an android app that allows a user to view their Twitter timeline and post a new tweet. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **X** hours spent in total
+Time spent: **15** hours spent in total
 
 ## User Stories
 
@@ -53,6 +53,7 @@ GIF created with [Kap](https://getkap.co/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+- RecyclerView recycling images from other tweets 
 
 ## Open-source libraries used
 
